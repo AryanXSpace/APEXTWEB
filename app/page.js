@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Sparkles, Check, ChevronRight, MessageCircle, Zap, Calendar, Award, HardDrive, SlidersHorizontal, ArrowRight, Star, BrainCircuit } from 'lucide-react';
+import { Sparkles, Check, ChevronRight, MessageCircle, Zap, Calendar, Award, HardDrive, SlidersHorizontal, ArrowRight, Star, BrainCircuit, Mail } from 'lucide-react';
 
 // Custom Hook for detecting when an element is in the viewport
 const useIntersectionObserver = (options) => {
@@ -53,10 +53,10 @@ const TiltOnHover = ({ children, className, perspective = 1000, maxTilt = 15 }) 
       ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      style={{ 
-          transition: 'transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)', 
-          willChange: 'transform',
-          transformStyle: 'preserve-3d' 
+      style={{
+        transition: 'transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        willChange: 'transform',
+        transformStyle: 'preserve-3d'
       }}
       className={className}
     >
@@ -64,6 +64,8 @@ const TiltOnHover = ({ children, className, perspective = 1000, maxTilt = 15 }) 
     </div>
   );
 };
+TiltOnHover.displayName = 'TiltOnHover';
+
 
 // Magnetic Button Wrapper
 const MagneticWrapper = ({ children }) => {
@@ -86,11 +88,11 @@ const MagneticWrapper = ({ children }) => {
     const { x, y } = position;
 
     return (
-        <div 
+        <div
             ref={ref}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            style={{ 
+            style={{
                 transform: `translate(${x}px, ${y}px)`,
                 transition: 'transform 0.15s linear'
             }}
@@ -99,6 +101,7 @@ const MagneticWrapper = ({ children }) => {
         </div>
     );
 };
+MagneticWrapper.displayName = 'MagneticWrapper';
 
 
 // Typing Animation Hero Text
@@ -141,6 +144,36 @@ const TypingHeroText = ({ phrases, className }) => {
         </h1>
     );
 };
+TypingHeroText.displayName = 'TypingHeroText';
+
+// Calendly Script Loader
+const useCalendly = () => {
+  useEffect(() => {
+    const head = document.querySelector('head');
+
+    // Load CSS
+    const cssLink = document.createElement('link');
+    cssLink.href = 'https://assets.calendly.com/assets/external/widget.css';
+    cssLink.rel = 'stylesheet';
+    head.appendChild(cssLink);
+
+    // Load JS
+    const script = document.createElement('script');
+    script.src = 'https://assets.calendly.com/assets/external/widget.js';
+    script.async = true;
+    head.appendChild(script);
+
+    return () => {
+      // Clean up scripts if component unmounts
+      if (head.contains(cssLink)) {
+        head.removeChild(cssLink);
+      }
+      if (head.contains(script)) {
+        head.removeChild(script);
+      }
+    }
+  }, []);
+};
 
 
 // Main App Component
@@ -148,7 +181,9 @@ const App = () => {
   const worksRef = useRef(null);
   const pricingRef = useRef(null);
   const aboutRef = useRef(null);
-  
+
+  useCalendly();
+
   // Mouse position effect for CSS variables
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -161,7 +196,7 @@ const App = () => {
 
   // Dynamic Favicon and Title
   useEffect(() => {
-    const faviconUrl = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='indigo' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 3L12 21M21 12L3 12M18.36 18.36L5.64 5.64M18.36 5.64L5.64 18.36'/></svg>`;
+    const faviconUrl = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' class='w-6 h-6'><path stroke-linecap='round' stroke-linejoin='round' d='M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z' /><path stroke-linecap='round' stroke-linejoin='round' d='M18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.898 20.624l-.219.872-.219-.872a3.375 3.375 0 0 0-2.25-2.25L13.5 18l.872-.219a3.375 3.375 0 0 0 2.25-2.25l.219-.872.219.872a3.375 3.375 0 0 0 2.25 2.25l.872.219-.872.219a3.375 3.375 0 0 0-2.25 2.25Z' /></svg>`.replace(/currentColor/g, '%23818cf8');
     const link = document.querySelector("link[rel~='icon']") || document.createElement('link');
     link.rel = 'icon';
     link.href = faviconUrl;
@@ -169,6 +204,7 @@ const App = () => {
 
     const titles = ["Apex Studio", "Build Stunning Websites", "Launch Projects Faster"];
     let i = 0;
+    document.title = titles[i];
     const titleInterval = setInterval(() => {
         i = (i + 1) % titles.length;
         document.title = titles[i];
@@ -177,14 +213,15 @@ const App = () => {
     return () => clearInterval(titleInterval);
   }, []);
 
+
   return (
     <div className="bg-black text-white font-sans overflow-x-hidden relative">
       <div className="spotlight"></div>
       <div className="relative z-10">
         <StyleInjector />
-        <Header 
-          worksRef={worksRef} 
-          pricingRef={pricingRef} 
+        <Header
+          worksRef={worksRef}
+          pricingRef={pricingRef}
           aboutRef={aboutRef}
         />
         <main>
@@ -196,7 +233,6 @@ const App = () => {
             <GeminiProjectPlanner />
         </main>
         <Footer />
-        <FloatingCallButton />
       </div>
     </div>
   );
@@ -210,12 +246,12 @@ const StyleInjector = () => (
     html {
         scroll-behavior: smooth;
     }
-    
+
     body {
       font-family: 'Inter', sans-serif;
       background-color: #0a0a0a;
     }
-    
+
     .spotlight {
         position: fixed;
         top: var(--mouse-y, 0px);
@@ -247,7 +283,7 @@ const StyleInjector = () => (
     .animate-pulse-slow {
       animation: pulse-slow 2.5s infinite cubic-bezier(0.4, 0, 0.6, 1);
     }
-    
+
     @keyframes slide-in-3d {
         from {
             opacity: 0;
@@ -263,35 +299,64 @@ const StyleInjector = () => (
         opacity: 0;
         animation: slide-in-3d 1s ease-out forwards;
     }
-    
+
     .stagger-children > * {
         opacity: 0;
     }
-    
+
     .stagger-children.is-visible > * {
         animation: slide-in-3d 0.8s ease-out forwards;
     }
-    
+
     .gradient-text {
         background: linear-gradient(90deg, #d8b4fe, #a78bfa, #818cf8);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
     }
 
-    @keyframes marquee { 
-      0% { transform: translateX(0); } 
-      100% { transform: translateX(-50%); } 
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
     }
-    .animate-marquee { 
-      animation: marquee 40s linear infinite; 
+    .animate-marquee {
+      animation: marquee 40s linear infinite;
     }
-    
+
     @keyframes blink {
       50% { opacity: 0; }
     }
     .animate-blinking-cursor {
       animation: blink 1s step-end infinite;
     }
+
+    /* Shining animation for the email button */
+    @keyframes shine {
+      100% {
+        left: 125%;
+      }
+    }
+
+    .brazy-button {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .brazy-button::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -75%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 100%);
+        transform: skewX(-25deg);
+        pointer-events: none;
+    }
+
+    .brazy-button:hover::before {
+        animation: shine 0.85s;
+    }
+
 
     .info-slider-container {
         position: relative;
@@ -328,7 +393,7 @@ const StyleInjector = () => (
       border-radius: 1.1rem;
       padding: 1px;
       background: radial-gradient(400px at var(--mouse-x) var(--mouse-y), rgba(167, 139, 250, 0.25), transparent 80%);
-      -webkit-mask: 
+      -webkit-mask:
          linear-gradient(#fff 0 0) content-box,
          linear-gradient(#fff 0 0);
       -webkit-mask-composite: xor;
@@ -368,9 +433,9 @@ const Header = ({ worksRef, pricingRef, aboutRef }) => {
   useEffect(() => {
     const controlHeader = () => {
         if (typeof window !== 'undefined') {
-            if (window.scrollY > lastScrollY.current && window.scrollY > 100) { 
+            if (window.scrollY > lastScrollY.current && window.scrollY > 100) {
                 setVisible(false);
-            } else { 
+            } else {
                 setVisible(true);
             }
             lastScrollY.current = window.scrollY;
@@ -379,8 +444,8 @@ const Header = ({ worksRef, pricingRef, aboutRef }) => {
 
     const handleActiveLink = () => {
         let currentSection = 'Home';
-        const headerOffset = 150; 
-        
+        const headerOffset = 150;
+
         for (const link of navLinks) {
             if (link.ref === 'home') continue;
             const section = link.ref.current;
@@ -416,11 +481,17 @@ const Header = ({ worksRef, pricingRef, aboutRef }) => {
     const headerOffset = 90;
     const elementPosition = ref.current?.getBoundingClientRect().top ?? 0;
     const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-  
+
     window.scrollTo({
          top: offsetPosition,
          behavior: "smooth"
     });
+  };
+
+  const openCalendly = () => {
+    if(window.Calendly) {
+        window.Calendly.initPopupWidget({ url: 'https://calendly.com/clientreviewsapex/15min' });
+    }
   };
 
   return (
@@ -450,12 +521,12 @@ const Header = ({ worksRef, pricingRef, aboutRef }) => {
                     </MagneticWrapper>
                 ))}
                 </div>
-                
+
                 <MagneticWrapper>
-                    <a href="#" className={`hidden sm:flex items-center space-x-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 transform group bg-white text-black`}>
+                    <button onClick={openCalendly} className={`hidden sm:flex items-center space-x-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 transform group bg-white text-black`}>
                     <span>Book a Call</span>
                     <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-                    </a>
+                    </button>
                 </MagneticWrapper>
             </nav>
         </div>
@@ -467,6 +538,11 @@ Header.displayName = 'Header';
 
 // Hero Section Component
 const HeroSection = () => {
+    const openCalendly = () => {
+        if(window.Calendly) {
+            window.Calendly.initPopupWidget({ url: 'https://calendly.com/clientreviewsapex/15min' });
+        }
+    };
   return (
     <section className="pt-48 pb-24 text-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
        <a
@@ -477,13 +553,13 @@ const HeroSection = () => {
         <span className="text-gray-300">The Ultimate Framework for Modern Startups</span>
         <ChevronRight className="w-4 h-4 text-gray-400" />
       </a>
-      
-      <TypingHeroText 
+
+      <TypingHeroText
         phrases={[
-          'Build Stunning Websites', 
-          'Launch Projects Faster', 
+          'Build Stunning Websites',
+          'Launch Projects Faster',
           'Create The Future'
-        ]} 
+        ]}
         className="font-extrabold text-5xl sm:text-6xl md:text-7xl leading-tight max-w-4xl mx-auto h-24 sm:h-36 md:h-40"
       />
 
@@ -493,15 +569,24 @@ const HeroSection = () => {
       >
         You focus on your business. We’ll build you a website that looks sharp and sells better.
       </p>
-      <div className="flex justify-center mt-10 fade-in-up" style={{ animationDelay: '450ms' }}>
+      <div className="flex justify-center items-center mt-10 fade-in-up gap-4" style={{ animationDelay: '450ms' }}>
         <MagneticWrapper>
             <button
             type="button"
-            className="inline-flex items-center space-x-3 bg-white text-black text-base font-semibold px-7 py-4 rounded-lg hover:bg-gray-200 transition-colors duration-300 transform shadow-lg"
+            onClick={openCalendly}
+            className="inline-flex items-center space-x-2 bg-white text-black text-sm font-semibold px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors duration-300 transform shadow-lg"
             >
-            <span className="w-3 h-3 rounded-full bg-green-400 inline-block animate-pulse-slow"></span>
-            <span>Book a Free Strategy Call</span>
+            <span className="w-2 h-2 rounded-full bg-green-400 inline-block animate-pulse-slow"></span>
+            <span>Book a Call</span>
             </button>
+        </MagneticWrapper>
+        <MagneticWrapper>
+            <a href="mailto:contact@apexservices.store"
+            className="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-500 to-indigo-600 text-white text-sm font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition-opacity duration-300 transform shadow-lg brazy-button"
+            >
+             <Mail className="w-4 h-4" />
+            <span>Email Us</span>
+            </a>
         </MagneticWrapper>
       </div>
     </section>
@@ -555,7 +640,7 @@ const WinningEdgeSection = React.forwardRef(function WinningEdgeSection(props, r
                    <TiltOnHover key={index} className="h-full" maxTilt={25}>
                         <div className="card-glow-border bg-gray-800/50 p-8 rounded-2xl group h-full flex flex-col" style={{ animationDelay: `${index * 100}ms` }}>
                             <div className="text-white mb-5 bg-indigo-600 w-14 h-14 rounded-xl flex items-center justify-center shadow-lg transform group-hover:rotate-12 transition-transform duration-300 shrink-0">
-                               {React.cloneElement(feature.icon, { className: 'w-7 h-7' })}
+                                {React.cloneElement(feature.icon, { className: 'w-7 h-7' })}
                             </div>
                             <h3 className="font-semibold text-white text-xl mb-2">{feature.title}</h3>
                             <p className="text-gray-400 text-sm leading-relaxed flex-grow">{feature.description}</p>
@@ -566,6 +651,7 @@ const WinningEdgeSection = React.forwardRef(function WinningEdgeSection(props, r
         </section>
     );
 });
+WinningEdgeSection.displayName = 'WinningEdgeSection';
 
 // Brand Defining Hero Section
 const BrandHeroSection = React.forwardRef(function BrandHeroSection(props, ref) {
@@ -610,9 +696,16 @@ const BrandHeroSection = React.forwardRef(function BrandHeroSection(props, ref) 
         </section>
     );
 });
+BrandHeroSection.displayName = 'BrandHeroSection';
+
 
 // Service Card Component with 3D Tilt
 const ServiceCard = ({ service }) => {
+    const openCalendly = () => {
+        if(window.Calendly) {
+            window.Calendly.initPopupWidget({ url: 'https://calendly.com/clientreviewsapex/15min' });
+        }
+    };
   return (
     <TiltOnHover className="card-glow-border bg-gray-800/50 rounded-2xl p-8 shadow-lg flex flex-col group h-full">
       <div className="h-full flex flex-col">
@@ -627,10 +720,10 @@ const ServiceCard = ({ service }) => {
             </li>
           ))}
         </ul>
-        <a href="#" className="mt-auto bg-indigo-600 text-white font-semibold rounded-lg px-6 py-3 text-center flex items-center justify-center gap-2 hover:bg-indigo-500 transition-all duration-300 transform group-hover:scale-105">
+        <button onClick={openCalendly} className="mt-auto bg-indigo-600 text-white font-semibold rounded-lg px-6 py-3 text-center flex items-center justify-center gap-2 hover:bg-indigo-500 transition-all duration-300 transform group-hover:scale-105">
             <span>Get Started</span>
             <ArrowRight className="w-4 h-4" />
-        </a>
+        </button>
       </div>
     </TiltOnHover>
   );
@@ -645,7 +738,7 @@ const ServicesSection = React.forwardRef(function ServicesSection(props, ref) {
         { title: "Multi-Page Website", price: "$500+", color: "text-purple-400", details: ["Up to 5 custom pages", "CMS integration", "Advanced animations"], description: "A multi-page site to showcase your brand and services in detail, built from scratch to production in 2-3 weeks." },
         { title: "Website Design", price: "$350", color: "text-green-400", details: ["UI/UX Design", "Prototyping & Wireframing", "Brand Style Guides"], description: "Stunning, modern website designs that capture your brand's essence and provide an amazing user experience." },
     ];
-    
+
     const [obsRef, isVisible] = useIntersectionObserver({ threshold: 0.1 });
 
     return (
@@ -662,6 +755,7 @@ const ServicesSection = React.forwardRef(function ServicesSection(props, ref) {
         </section>
     );
 });
+ServicesSection.displayName = 'ServicesSection';
 
 // Gemini AI Project Planner
 const GeminiProjectPlanner = () => {
@@ -679,43 +773,14 @@ const GeminiProjectPlanner = () => {
         setError(null);
         setPlan(null);
 
-        try {
-            const prompt = `Create a concise project plan for the following idea: "${idea}". The plan should have a project title and 3-4 main stages. Each stage should have a title and a bulleted list of 3-5 key tasks. Format the response as a JSON object. The structure should be: { "projectTitle": "...", "stages": [{ "stageTitle": "...", "tasks": ["...", "...", "..."] }] }`;
-            
-            const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-            const payload = { contents: chatHistory };
-            const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY; 
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) {
-                throw new Error(`API error: ${response.statusText}`);
-            }
-
-            const result = await response.json();
-            
-            if (result.candidates && result.candidates[0].content.parts[0].text) {
-                const rawText = result.candidates[0].content.parts[0].text;
-                // Clean the text to ensure it's valid JSON
-                const cleanedText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-                const parsedPlan = JSON.parse(cleanedText);
-                setPlan(parsedPlan);
-            } else {
-                throw new Error('Unexpected API response format.');
-            }
-        } catch (e) {
-            console.error("Error generating plan:", e);
-            setError("Sorry, we couldn't generate a plan. Please try again.");
-        } finally {
+        // Simulate testing phase
+        setTimeout(() => {
+            setError("This feature is currently in the testing phase. Please check back later!");
             setIsLoading(false);
-        }
+            setTimeout(() => setError(null), 4000); // Clear message after 4s
+        }, 1500);
     };
-    
+
     return (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
             <header className="text-center mb-16">
@@ -746,45 +811,7 @@ const GeminiProjectPlanner = () => {
                         <span>{isLoading ? 'Generating...' : '✨ Generate Plan'}</span>
                     </button>
                 </div>
-                {error && <p className="text-rose-400 mt-4 text-center">{error}</p>}
-                
-                {plan && (
-                    <div className="mt-8 border-t border-gray-700 pt-6 animate-slide-in-3d">
-                        <h3 className="text-2xl font-bold text-center mb-6">{plan.projectTitle}</h3>
-                        <div className="space-y-6">
-                            {plan.stages.map((stage, index) => (
-                                <div key={index} className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/80">
-                                    <h4 className="text-lg font-semibold text-indigo-400 mb-3">{stage.stageTitle}</h4>
-                                    <ul className="space-y-2">
-                                        {stage.tasks.map((task, taskIndex) => (
-                                            <li key={taskIndex} className="flex items-start gap-3">
-                                                <Check className="w-5 h-5 text-green-500 mt-1 shrink-0" />
-                                                <span className="text-gray-300">{task}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-                 {isLoading && !plan && (
-                    <div className="mt-8 border-t border-gray-700 pt-6">
-                         <div className="space-y-4">
-                             {[...Array(3)].map((_, i) => (
-                                 <div key={i} className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/80 animate-loading-pulse">
-                                     <div className="h-6 bg-gray-700/80 rounded w-1/3 mb-4"></div>
-                                     <div className="space-y-2">
-                                         <div className="h-4 bg-gray-700/80 rounded w-full"></div>
-                                         <div className="h-4 bg-gray-700/80 rounded w-5/6"></div>
-                                         <div className="h-4 bg-gray-700/80 rounded w-3/4"></div>
-                                     </div>
-                                 </div>
-                             ))}
-                         </div>
-                    </div>
-                 )}
-
+                {error && <p className="text-amber-400 mt-4 text-center">{error}</p>}
             </div>
         </section>
     )
@@ -823,10 +850,10 @@ const Footer = () => {
           <div>
             <h3 className="text-white font-semibold text-lg mb-4">Connect</h3>
             <ul className="space-y-3 text-sm">
-               <li><a href="#" className="hover:text-indigo-400 transition-colors">Twitter</a></li>
+               <li><a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors">Twitter</a></li>
+               <li><a href="mailto:contact@apexservices.store" className="hover:text-indigo-400 transition-colors">contact@apexservices.store</a></li>
                <li><a href="#" className="hover:text-indigo-400 transition-colors">LinkedIn</a></li>
                <li><a href="#" className="hover:text-indigo-400 transition-colors">Instagram</a></li>
-               <li><a href="#" className="hover:text-indigo-400 transition-colors">Email Us</a></li>
             </ul>
           </div>
         </div>
@@ -841,10 +868,15 @@ Footer.displayName = 'Footer';
 
 // Floating Call Button
 const FloatingCallButton = () => {
+    const openCalendly = () => {
+        if(window.Calendly) {
+            window.Calendly.initPopupWidget({ url: 'https://calendly.com/clientreviewsapex/15min' });
+        }
+    };
   return (
-    <a href="#" className="fixed bottom-8 right-8 bg-indigo-600 text-white p-4 rounded-full shadow-2xl hover:bg-indigo-500 transition-all duration-300 flex items-center justify-center z-50 transform hover:scale-110 hover:rotate-12">
+    <button onClick={openCalendly} className="fixed bottom-8 right-8 bg-indigo-600 text-white p-4 rounded-full shadow-2xl hover:bg-indigo-500 transition-all duration-300 flex items-center justify-center z-50 transform hover:scale-110 hover:rotate-12">
       <Calendar className="h-6 w-6" />
-    </a>
+    </button>
   );
 };
 FloatingCallButton.displayName = 'FloatingCallButton';
