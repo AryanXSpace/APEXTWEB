@@ -175,6 +175,45 @@ const useCalendly = () => {
   }, []);
 };
 
+// New "Loki Multiverse" Style Apex Logo Component
+const ApexLogo = ({ className }) => (
+    <svg
+        className={className}
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+    >
+        <defs>
+            <linearGradient id="loki-main" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#c084fc" />
+                <stop offset="100%" stopColor="#6366f1" />
+            </linearGradient>
+            <linearGradient id="loki-accent" x1="100%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#4ade80" />
+                <stop offset="100%" stopColor="#a78bfa" />
+            </linearGradient>
+            <filter id="glow">
+                <feGaussianBlur stdDeviation="0.5" result="coloredBlur"/>
+                <feMerge>
+                    <feMergeNode in="coloredBlur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+            </filter>
+        </defs>
+        {/* Interweaving timeline paths */}
+        <path d="M4 12C4 7.58172 7.58172 4 12 4C16.4183 4 20 7.58172 20 12" stroke="url(#loki-main)" strokeWidth="1.5" strokeLinecap="round" filter="url(#glow)"/>
+        <path d="M20 12C20 16.4183 16.4183 20 12 20C7.58172 20 4 16.4183 4 12" stroke="url(#loki-accent)" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M12 2V6" stroke="url(#loki-main)" strokeWidth="1" strokeLinecap="round" />
+        <path d="M12 18V22" stroke="url(#loki-accent)" strokeWidth="1" strokeLinecap="round" />
+        {/* Central chaotic element */}
+        <path d="M10 11C11.5 9.5 12.5 9.5 14 11L13 13C11.5 14.5 12.5 14.5 11 13L10 11Z" fill="url(#loki-main)" opacity="0.8" filter="url(#glow)"/>
+        {/* Stray timelines / Loki's mischief */}
+        <path d="M3 7C5 5 8 5 10 7" stroke="url(#loki-accent)" strokeWidth="0.75" strokeLinecap="round" />
+        <path d="M21 17C19 19 16 19 14 17" stroke="url(#loki-main)" strokeWidth="0.75" strokeLinecap="round" />
+    </svg>
+);
+ApexLogo.displayName = 'ApexLogo';
+
 
 // Main App Component
 const App = () => {
@@ -196,7 +235,8 @@ const App = () => {
 
   // Dynamic Favicon and Title
   useEffect(() => {
-    const faviconUrl = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' class='w-6 h-6'><path stroke-linecap='round' stroke-linejoin='round' d='M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09Z' /><path stroke-linecap='round' stroke-linejoin='round' d='M18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.898 20.624l-.219.872-.219-.872a3.375 3.375 0 0 0-2.25-2.25L13.5 18l.872-.219a3.375 3.375 0 0 0 2.25-2.25l.219-.872.219.872a3.375 3.375 0 0 0 2.25 2.25l.872.219-.872.219a3.375 3.375 0 0 0-2.25 2.25Z' /></svg>`.replace(/currentColor/g, '%23818cf8');
+    const rawSvg = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="loki-main" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#c084fc" /><stop offset="100%" stop-color="#6366f1" /></linearGradient><linearGradient id="loki-accent" x1="100%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#4ade80" /><stop offset="100%" stop-color="#a78bfa" /></linearGradient><filter id="glow"><feGaussianBlur stdDeviation="0.5" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path d="M4 12C4 7.58172 7.58172 4 12 4C16.4183 4 20 7.58172 20 12" stroke="url(#loki-main)" stroke-width="1.5" stroke-linecap="round" filter="url(#glow)"/><path d="M20 12C20 16.4183 16.4183 20 12 20C7.58172 20 4 16.4183 4 12" stroke="url(#loki-accent)" stroke-width="1.5" stroke-linecap="round" /><path d="M12 2V6" stroke="url(#loki-main)" stroke-width="1" stroke-linecap="round" /><path d="M12 18V22" stroke="url(#loki-accent)" stroke-width="1" stroke-linecap="round" /><path d="M10 11C11.5 9.5 12.5 9.5 14 11L13 13C11.5 14.5 12.5 14.5 11 13L10 11Z" fill="url(#loki-main)" opacity="0.8" filter="url(#glow)"/><path d="M3 7C5 5 8 5 10 7" stroke="url(#loki-accent)" stroke-width="0.75" stroke-linecap="round" /><path d="M21 17C19 19 16 19 14 17" stroke="url(#loki-main)" stroke-width="0.75" stroke-linecap="round" /></svg>`;
+    const faviconUrl = `data:image/svg+xml,${encodeURIComponent(rawSvg)}`;
     const link = document.querySelector("link[rel~='icon']") || document.createElement('link');
     link.rel = 'icon';
     link.href = faviconUrl;
@@ -500,7 +540,7 @@ const Header = ({ worksRef, pricingRef, aboutRef }) => {
             <nav className={`max-w-7xl mx-auto flex items-center justify-between`}>
                 <MagneticWrapper>
                     <a href="#home" onClick={() => handleNavClick('home', 'Home')} className="flex items-center space-x-2 px-3 py-2 bg-black/50 backdrop-blur-xl shadow-lg border border-gray-700/50 rounded-full">
-                    <Sparkles className={`w-7 h-7 text-indigo-400`} />
+                    <ApexLogo className="w-7 h-7" />
                     <span className={`text-2xl font-bold tracking-tighter text-white`}>Apex Studio</span>
                     </a>
                 </MagneticWrapper>
@@ -826,7 +866,10 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12">
           <div>
-            <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-white"><Sparkles className="w-6 h-6 text-indigo-400"/> Apex Studio</h3>
+            <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-white">
+                <ApexLogo className="w-6 h-6" />
+                Apex Studio
+            </h3>
             <p className="text-slate-400 leading-relaxed max-w-xs text-sm">Building successful digital products through innovation and expertise.</p>
           </div>
           <div>
