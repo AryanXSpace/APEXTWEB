@@ -774,8 +774,8 @@ ServiceCard.displayName = 'ServiceCard';
 // Services Section
 const ServicesSection = React.forwardRef(function ServicesSection(props, ref) {
     const services = [
-        { title: "Landing Page", color: "text-blue-400", details: ["Mobile responsive design", "SEO optimized", "Contact form integration"], description: "A single, high-impact page designed to capture leads and drive conversions, built from scratch to production in 7-10 days." },
-        { title: "Multi-Page Website", color: "text-purple-400", details: ["Up to 5 custom pages", "CMS integration", "Advanced animations"], description: "A multi-page site to showcase your brand and services in detail, built from scratch to production in 2-3 weeks." },
+        { title: "Landing Page",color: "text-blue-400", details: ["Mobile responsive design", "SEO optimized", "Contact form integration"], description: "A single, high-impact page designed to capture leads and drive conversions, built from scratch to production in 7-10 days." },
+        { title: "Multi-Page Website",color: "text-purple-400", details: ["Up to 5 custom pages", "CMS integration", "Advanced animations"], description: "A multi-page site to showcase your brand and services in detail, built from scratch to production in 2-3 weeks." },
         { title: "Website Design", color: "text-green-400", details: ["UI/UX Design", "Prototyping & Wireframing", "Brand Style Guides"], description: "Stunning, modern website designs that capture your brand's essence and provide an amazing user experience." },
     ];
 
@@ -828,7 +828,7 @@ const GeminiProjectPlanner = () => {
                     <Sparkles className="w-10 h-10 text-indigo-400"/>
                     Plan Your Project With AI
                 </h2>
-                <p className="mt-4 text-lg text-gray-400">Got an idea? Let our Own Ai-powered draft a plan to get you started.</p>
+                <p className="mt-4 text-lg text-gray-400">Got an idea? Let our Own Ai draft a plan to get you started.</p>
             </header>
             <div className="max-w-3xl mx-auto bg-black/30 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-8">
                 <div className="flex flex-col sm:flex-row gap-4">
@@ -895,7 +895,7 @@ const Footer = () => {
             <ul className="space-y-3 text-sm">
                <li><a href="https://x.com/Apex_Studio_007" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors">Twitter</a></li>
                <li><a href="mailto:contact@apexservices.store" className="hover:text-indigo-400 transition-colors">contact@apexservices.store</a></li>
-                
+               
             </ul>
           </div>
         </div>
