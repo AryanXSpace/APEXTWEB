@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Sparkles, Check, ChevronRight, MessageCircle, Zap, Calendar, Award, HardDrive, SlidersHorizontal, ArrowRight, Star, BrainCircuit } from 'lucide-react';
 
 // Custom Hook for detecting when an element is in the viewport
@@ -341,12 +341,12 @@ const Header = ({ worksRef, pricingRef, aboutRef }) => {
   const [visible, setVisible] = useState(true);
   const lastScrollY = useRef(0);
 
-  const navLinks = [
+  const navLinks = useMemo(() => [
     { name: 'Home', ref: 'home' },
     { name: 'About', ref: aboutRef },
     { name: 'Works', ref: worksRef },
     { name: 'Pricing', ref: pricingRef },
-  ];
+  ], [aboutRef, worksRef, pricingRef]);
 
   useEffect(() => {
     const controlHeader = () => {
@@ -417,7 +417,7 @@ const Header = ({ worksRef, pricingRef, aboutRef }) => {
                     </a>
                 </MagneticWrapper>
 
-                <div className="hidden md:flex items-center gap-x-2 bg-black/50 backdrop-blur-xl shadow-lg border border-gray-700/50 p-1 rounded-full">
+                <div className="hidden md:flex items-center gap-x-2 p-1 rounded-full bg-black/50 backdrop-blur-xl shadow-lg border border-gray-700/50">
                 {navLinks.map((link) => (
                     <MagneticWrapper key={link.name}>
                         <button
@@ -512,7 +512,7 @@ const InfoSlider = () => {
 
 
 // Winning Edge Section
-const WinningEdgeSection = React.forwardRef((props, ref) => {
+const WinningEdgeSection = React.forwardRef(function WinningEdgeSection(props, ref) {
     const [obsRef, isVisible] = useIntersectionObserver({ threshold: 0.1 });
     const features = [
         { icon: <SlidersHorizontal />, title: "SEO-Optimized", description: "Our SEO-centric design approach enhances your online visibility, driving organic traffic by securing prime ranks on Google search." },
@@ -547,7 +547,7 @@ const WinningEdgeSection = React.forwardRef((props, ref) => {
 });
 
 // Brand Defining Hero Section
-const BrandHeroSection = React.forwardRef((props, ref) => {
+const BrandHeroSection = React.forwardRef(function BrandHeroSection(props, ref) {
     const slides = [
         { text: 'Frame 1: Brand Identity', bg: 'bg-yellow-100', color: 'text-yellow-900' },
         { text: 'Frame 2: Creative Vision', bg: 'bg-green-100', color: 'text-green-900' },
@@ -616,7 +616,7 @@ const ServiceCard = ({ service }) => {
 };
 
 // Services Section
-const ServicesSection = React.forwardRef((props, ref) => {
+const ServicesSection = React.forwardRef(function ServicesSection(props, ref) {
     const services = [
         { title: "Landing Page", price: "$400", color: "text-blue-400", details: ["Mobile responsive design", "SEO optimized", "Contact form integration"], description: "A single, high-impact page designed to capture leads and drive conversions, built from scratch to production in 7-10 days." },
         { title: "Multi-Page Website", price: "$500+", color: "text-purple-400", details: ["Up to 5 custom pages", "CMS integration", "Advanced animations"], description: "A multi-page site to showcase your brand and services in detail, built from scratch to production in 2-3 weeks." },
