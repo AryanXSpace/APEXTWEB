@@ -159,6 +159,23 @@ const App = () => {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
+  // Dynamic Favicon and Title
+  useEffect(() => {
+    const faviconUrl = `data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='indigo' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 3L12 21M21 12L3 12M18.36 18.36L5.64 5.64M18.36 5.64L5.64 18.36'/></svg>`;
+    const link = document.querySelector("link[rel~='icon']") || document.createElement('link');
+    link.rel = 'icon';
+    link.href = faviconUrl;
+    document.head.appendChild(link);
+
+    const titles = ["Apex Studio", "Build Stunning Websites", "Launch Projects Faster"];
+    let i = 0;
+    const titleInterval = setInterval(() => {
+        i = (i + 1) % titles.length;
+        document.title = titles[i];
+    }, 4000);
+
+    return () => clearInterval(titleInterval);
+  }, []);
 
   return (
     <div className="bg-black text-white font-sans overflow-x-hidden relative">
@@ -413,7 +430,7 @@ const Header = ({ worksRef, pricingRef, aboutRef }) => {
                 <MagneticWrapper>
                     <a href="#home" onClick={() => handleNavClick('home', 'Home')} className="flex items-center space-x-2 px-3 py-2 bg-black/50 backdrop-blur-xl shadow-lg border border-gray-700/50 rounded-full">
                     <Sparkles className={`w-7 h-7 text-indigo-400`} />
-                    <span className={`text-2xl font-bold tracking-tighter text-white`}>Lander</span>
+                    <span className={`text-2xl font-bold tracking-tighter text-white`}>Apex Studio</span>
                     </a>
                 </MagneticWrapper>
 
@@ -474,7 +491,7 @@ const HeroSection = () => {
         className="text-gray-400 text-lg mt-8 max-w-2xl mx-auto fade-in-up"
         style={{ animationDelay: '300ms' }}
       >
-        Lander provides all the components and tools you need to launch a beautiful, professional website that converts.
+        You focus on your business. We’ll build you a website that looks sharp and sells better.
       </p>
       <div className="flex justify-center mt-10 fade-in-up" style={{ animationDelay: '450ms' }}>
         <MagneticWrapper>
@@ -782,7 +799,7 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12">
           <div>
-            <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-white"><Sparkles className="w-6 h-6 text-indigo-400"/> Lander</h3>
+            <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-white"><Sparkles className="w-6 h-6 text-indigo-400"/> Apex Studio</h3>
             <p className="text-slate-400 leading-relaxed max-w-xs text-sm">Building successful digital products through innovation and expertise.</p>
           </div>
           <div>
@@ -814,7 +831,7 @@ const Footer = () => {
           </div>
         </div>
         <hr className="border-slate-800 mt-16 mb-8" />
-        <p className="text-center text-slate-500 text-sm">© {new Date().getFullYear()} Lander. All rights reserved.</p>
+        <p className="text-center text-slate-500 text-sm">© {new Date().getFullYear()} Apex Studio. All rights reserved.</p>
       </div>
     </footer>
   );
