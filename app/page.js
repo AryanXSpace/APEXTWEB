@@ -893,7 +893,7 @@ const Footer = () => {
           <div>
             <h3 className="text-white font-semibold text-lg mb-4">Connect</h3>
             <ul className="space-y-3 text-sm">
-               <li><a href="https://x.com/Apex_Studio_007" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors">Twitter</a></li>
+               <li><a href="https://x.com/Apexstudio_labs" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors">Twitter</a></li>
                <li><a href="mailto:contact@apexservices.store" className="hover:text-indigo-400 transition-colors">contact@apexservices.store</a></li>
                
             </ul>
