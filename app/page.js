@@ -895,8 +895,7 @@ const Footer = () => {
             <ul className="space-y-3 text-sm">
                <li><a href="https://x.com/Apex_Studio_007" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors">Twitter</a></li>
                <li><a href="mailto:contact@apexservices.store" className="hover:text-indigo-400 transition-colors">contact@apexservices.store</a></li>
-               /* <li><a href="#" className="hover:text-indigo-400 transition-colors">LinkedIn</a></li> *\
-               /* <li><a href="#" className="hover:text-indigo-400 transition-colors">Instagram</a></li> *\
+                
             </ul>
           </div>
         </div>
