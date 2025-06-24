@@ -1,103 +1,826 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import React, { useState, useEffect, useRef } from 'react';
+import { Sparkles, Check, ChevronRight, MessageCircle, Zap, Calendar, Award, HardDrive, SlidersHorizontal, ArrowRight, Star, BrainCircuit } from 'lucide-react';
+
+// Custom Hook for detecting when an element is in the viewport
+const useIntersectionObserver = (options) => {
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsIntersecting(true);
+        observer.disconnect();
+      }
+    }, options);
+
+    const currentRef = ref.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [ref, options]);
+
+  return [ref, isIntersecting];
+};
+
+// Reusable 3D Tilt Component
+const TiltOnHover = ({ children, className, perspective = 1000, maxTilt = 15 }) => {
+  const ref = useRef(null);
+
+  const handleMouseMove = (e) => {
+    if (!ref.current) return;
+    const { left, top, width, height } = ref.current.getBoundingClientRect();
+    const x = (e.clientX - left - width / 2) / maxTilt;
+    const y = (e.clientY - top - height / 2) / maxTilt;
+    ref.current.style.transform = `perspective(${perspective}px) rotateY(${x}deg) rotateX(${-y}deg) scale3d(1.05, 1.05, 1.05)`;
+  };
+
+  const handleMouseLeave = () => {
+    if (!ref.current) return;
+    ref.current.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg) scale3d(1, 1, 1)';
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+    <div
+      ref={ref}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ 
+          transition: 'transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)', 
+          willChange: 'transform',
+          transformStyle: 'preserve-3d' 
+      }}
+      className={className}
+    >
+      {React.cloneElement(children, { style: { transform: 'translateZ(20px)', backfaceVisibility: 'hidden' } })}
     </div>
   );
-}
+};
+
+// Magnetic Button Wrapper
+const MagneticWrapper = ({ children }) => {
+    const ref = useRef(null);
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+
+    const handleMouseMove = (e) => {
+        if (!ref.current) return;
+        const { clientX, clientY } = e;
+        const { height, width, left, top } = ref.current.getBoundingClientRect();
+        const middleX = clientX - (left + width / 2);
+        const middleY = clientY - (top + height / 2);
+        setPosition({ x: middleX * 0.2, y: middleY * 0.2 });
+    };
+
+    const handleMouseLeave = () => {
+        setPosition({ x: 0, y: 0 });
+    };
+
+    const { x, y } = position;
+
+    return (
+        <div 
+            ref={ref}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            style={{ 
+                transform: `translate(${x}px, ${y}px)`,
+                transition: 'transform 0.15s linear'
+            }}
+        >
+            {children}
+        </div>
+    );
+};
+
+
+// Typing Animation Hero Text
+const TypingHeroText = ({ phrases, className }) => {
+    const [text, setText] = useState('');
+    const [phraseIndex, setPhraseIndex] = useState(0);
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    useEffect(() => {
+        const currentPhrase = phrases[phraseIndex];
+        const typingSpeed = 100;
+        const deletingSpeed = 50;
+        const delayAfterTyping = 2000;
+
+        const handleTyping = () => {
+            if (isDeleting) {
+                if (text.length > 0) {
+                    setText(current => current.substring(0, current.length - 1));
+                } else {
+                    setIsDeleting(false);
+                    setPhraseIndex((prev) => (prev + 1) % phrases.length);
+                }
+            } else {
+                if (text.length < currentPhrase.length) {
+                    setText(current => current + currentPhrase.charAt(text.length));
+                } else {
+                    setTimeout(() => setIsDeleting(true), delayAfterTyping);
+                }
+            }
+        };
+
+        const timeout = setTimeout(handleTyping, isDeleting ? deletingSpeed : typingSpeed);
+        return () => clearTimeout(timeout);
+    }, [text, isDeleting, phraseIndex, phrases]);
+
+    return (
+        <h1 className={className}>
+            <span className="gradient-text">{text}</span>
+            <span className="animate-blinking-cursor text-gray-400">|</span>
+        </h1>
+    );
+};
+
+
+// Main App Component
+const App = () => {
+  const worksRef = useRef(null);
+  const pricingRef = useRef(null);
+  const aboutRef = useRef(null);
+  
+  // Mouse position effect for CSS variables
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      document.documentElement.style.setProperty('--mouse-x', `${e.clientX}px`);
+      document.documentElement.style.setProperty('--mouse-y', `${e.clientY}px`);
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+
+  return (
+    <div className="bg-black text-white font-sans overflow-x-hidden relative">
+      <div className="spotlight"></div>
+      <div className="relative z-10">
+        <StyleInjector />
+        <Header 
+          worksRef={worksRef} 
+          pricingRef={pricingRef} 
+          aboutRef={aboutRef}
+        />
+        <main>
+            <HeroSection />
+            <InfoSlider />
+            <WinningEdgeSection ref={aboutRef} />
+            <BrandHeroSection ref={worksRef} />
+            <ServicesSection ref={pricingRef} />
+            <GeminiProjectPlanner />
+        </main>
+        <Footer />
+        <FloatingCallButton />
+      </div>
+    </div>
+  );
+};
+
+// Component to inject global styles and animations
+const StyleInjector = () => (
+  <style>{`
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;700&display=swap');
+
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0a0a0a;
+    }
+    
+    .spotlight {
+        position: fixed;
+        top: var(--mouse-y, 0px);
+        left: var(--mouse-x, 0px);
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(167, 139, 250, 0.25), transparent 50%);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        z-index: 0;
+        transition: background 0.2s ease;
+    }
+
+    .playfair-font {
+      font-family: 'Playfair Display', serif;
+    }
+
+    @keyframes pulse-slow {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
+      }
+      50% {
+        transform: scale(0.97);
+        box-shadow: 0 0 0 12px rgba(34, 197, 94, 0);
+      }
+    }
+    .animate-pulse-slow {
+      animation: pulse-slow 2.5s infinite cubic-bezier(0.4, 0, 0.6, 1);
+    }
+    
+    @keyframes slide-in-3d {
+        from {
+            opacity: 0;
+            transform: translateY(50px) scale(0.95) rotateX(-10deg);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1) rotateX(0deg);
+        }
+    }
+
+    .fade-in-up {
+        opacity: 0;
+        animation: slide-in-3d 1s ease-out forwards;
+    }
+    
+    .stagger-children > * {
+        opacity: 0;
+    }
+    
+    .stagger-children.is-visible > * {
+        animation: slide-in-3d 0.8s ease-out forwards;
+    }
+    
+    .gradient-text {
+        background: linear-gradient(90deg, #d8b4fe, #a78bfa, #818cf8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    @keyframes marquee { 
+      0% { transform: translateX(0); } 
+      100% { transform: translateX(-50%); } 
+    }
+    .animate-marquee { 
+      animation: marquee 40s linear infinite; 
+    }
+    
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+    .animate-blinking-cursor {
+      animation: blink 1s step-end infinite;
+    }
+
+    .info-slider-container {
+        position: relative;
+    }
+    .info-slider-container::before, .info-slider-container::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        width: 100px;
+        z-index: 2;
+        pointer-events: none;
+    }
+    .info-slider-container::before {
+        left: 0;
+        background: linear-gradient(to right, #111827, transparent);
+    }
+    .info-slider-container::after {
+        right: 0;
+        background: linear-gradient(to left, #111827, transparent);
+    }
+
+    .card-glow-border {
+      border: 1px solid rgb(55 65 81 / 0.5);
+      position: relative;
+    }
+    .card-glow-border:hover {
+      border-color: rgb(167 139 250 / 0.5);
+    }
+    .card-glow-border::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 1.1rem;
+      padding: 1px;
+      background: radial-gradient(400px at var(--mouse-x) var(--mouse-y), rgba(167, 139, 250, 0.25), transparent 80%);
+      -webkit-mask: 
+         linear-gradient(#fff 0 0) content-box,
+         linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .card-glow-border:hover::before {
+      opacity: 1;
+    }
+
+    @keyframes loading-pulse {
+        0%, 100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0.5;
+        }
+    }
+  `}</style>
+);
+
+
+// Header Component
+const Header = ({ worksRef, pricingRef, aboutRef }) => {
+  const [activeLink, setActiveLink] = useState('Home');
+  const [visible, setVisible] = useState(true);
+  const lastScrollY = useRef(0);
+
+  const navLinks = [
+    { name: 'Home', ref: 'home' },
+    { name: 'About', ref: aboutRef },
+    { name: 'Works', ref: worksRef },
+    { name: 'Pricing', ref: pricingRef },
+  ];
+
+  useEffect(() => {
+    const controlHeader = () => {
+        if (typeof window !== 'undefined') {
+            if (window.scrollY > lastScrollY.current && window.scrollY > 100) { 
+                setVisible(false);
+            } else { 
+                setVisible(true);
+            }
+            lastScrollY.current = window.scrollY;
+        }
+    };
+
+    const handleActiveLink = () => {
+        let currentSection = 'Home';
+        const headerOffset = 150; 
+        
+        for (const link of navLinks) {
+            if (link.ref === 'home') continue;
+            const section = link.ref.current;
+            if (section) {
+                const rect = section.getBoundingClientRect();
+                if (rect.top <= headerOffset && rect.bottom >= headerOffset) {
+                    currentSection = link.name;
+                }
+            }
+        }
+         if (window.scrollY < 300) {
+            currentSection = 'Home';
+        }
+        setActiveLink(currentSection);
+    };
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('scroll', controlHeader);
+      window.addEventListener('scroll', handleActiveLink);
+      return () => {
+        window.removeEventListener('scroll', controlHeader);
+        window.removeEventListener('scroll', handleActiveLink);
+      };
+    }
+  }, [navLinks]);
+
+  const handleNavClick = (ref, linkName) => {
+    setActiveLink(linkName);
+    if (ref === 'home') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+    }
+    const headerOffset = 90;
+    const elementPosition = ref.current?.getBoundingClientRect().top ?? 0;
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+  
+    window.scrollTo({
+         top: offsetPosition,
+         behavior: "smooth"
+    });
+  };
+
+  return (
+    <header className={`fixed top-0 left-0 w-full z-50 transition-transform duration-500 ease-in-out ${visible ? 'translate-y-0' : '-translate-y-full'}`}>
+        <div className="py-4 px-6">
+            <nav className={`max-w-7xl mx-auto flex items-center justify-between`}>
+                <MagneticWrapper>
+                    <a href="#home" onClick={() => handleNavClick('home', 'Home')} className="flex items-center space-x-2 px-3 py-2 bg-black/50 backdrop-blur-xl shadow-lg border border-gray-700/50 rounded-full">
+                    <Sparkles className={`w-7 h-7 text-indigo-400`} />
+                    <span className={`text-2xl font-bold tracking-tighter text-white`}>Lander</span>
+                    </a>
+                </MagneticWrapper>
+
+                <div className="hidden md:flex items-center gap-x-2 bg-black/50 backdrop-blur-xl shadow-lg border border-gray-700/50 p-1 rounded-full">
+                {navLinks.map((link) => (
+                    <MagneticWrapper key={link.name}>
+                        <button
+                        onClick={() => handleNavClick(link.ref, link.name)}
+                        className={`px-4 py-1.5 text-sm font-semibold rounded-full transition-all duration-300 outline-none ${
+                            activeLink === link.name
+                            ? `text-black shadow bg-white`
+                            : `text-gray-300 hover:text-white`
+                        }`}
+                        >
+                        {link.name}
+                        </button>
+                    </MagneticWrapper>
+                ))}
+                </div>
+                
+                <MagneticWrapper>
+                    <a href="#" className={`hidden sm:flex items-center space-x-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 transform group bg-white text-black`}>
+                    <span>Book a Call</span>
+                    <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                    </a>
+                </MagneticWrapper>
+            </nav>
+        </div>
+    </header>
+  );
+};
+
+// Hero Section Component
+const HeroSection = () => {
+  return (
+    <section className="pt-48 pb-24 text-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+       <a
+        href="#"
+        className="inline-flex items-center justify-center space-x-2 rounded-full border border-gray-600/50 bg-gray-800/50 px-4 py-2 text-xs font-semibold text-white hover:bg-gray-700/50 transition-colors duration-300 shadow-sm mb-8 fade-in-up"
+      >
+        <span className="inline-block rounded-full bg-indigo-500 px-2.5 py-1 text-white text-[10px] font-bold leading-none tracking-wide">NEW</span>
+        <span className="text-gray-300">The Ultimate Framework for Modern Startups</span>
+        <ChevronRight className="w-4 h-4 text-gray-400" />
+      </a>
+      
+      <TypingHeroText 
+        phrases={[
+          'Build Stunning Websites', 
+          'Launch Projects Faster', 
+          'Create The Future'
+        ]} 
+        className="font-extrabold text-5xl sm:text-6xl md:text-7xl leading-tight max-w-4xl mx-auto h-24 sm:h-36 md:h-40"
+      />
+
+      <p
+        className="text-gray-400 text-lg mt-8 max-w-2xl mx-auto fade-in-up"
+        style={{ animationDelay: '300ms' }}
+      >
+        Lander provides all the components and tools you need to launch a beautiful, professional website that converts.
+      </p>
+      <div className="flex justify-center mt-10 fade-in-up" style={{ animationDelay: '450ms' }}>
+        <MagneticWrapper>
+            <button
+            type="button"
+            className="inline-flex items-center space-x-3 bg-white text-black text-base font-semibold px-7 py-4 rounded-lg hover:bg-gray-200 transition-colors duration-300 transform shadow-lg"
+            >
+            <span className="w-3 h-3 rounded-full bg-green-400 inline-block animate-pulse-slow"></span>
+            <span>Book a Free Strategy Call</span>
+            </button>
+        </MagneticWrapper>
+      </div>
+    </section>
+  );
+};
+
+// Info Slider Component
+const InfoSlider = () => {
+    const slides = [
+        "Innovative Solutions", "Expert Team", "Outstanding Support", "Proven Results", "Pixel-Perfect Design", "Lightning-Fast Performance"
+    ];
+    return (
+        <div className="py-12 bg-gray-900/50 backdrop-blur-sm border-y border-gray-700/50">
+            <div className="relative h-12 overflow-hidden info-slider-container">
+                <div className="absolute top-0 flex animate-marquee whitespace-nowrap">
+                    {slides.concat(slides).map((slide, index) => (
+                        <div key={index} className="flex items-center mx-6">
+                           <Star className="w-5 h-5 text-indigo-400 mr-3" />
+                           <span className="text-xl font-semibold text-gray-300">{slide}</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+
+// Winning Edge Section
+const WinningEdgeSection = React.forwardRef((props, ref) => {
+    const [obsRef, isVisible] = useIntersectionObserver({ threshold: 0.1 });
+    const features = [
+        { icon: <SlidersHorizontal />, title: "SEO-Optimized", description: "Our SEO-centric design approach enhances your online visibility, driving organic traffic by securing prime ranks on Google search." },
+        { icon: <Zap />, title: "High-Converting Design", description: "Our engaging design techniques drive remarkable increases in conversion rates by compelling visitors to take decisive, intentional action." },
+        { icon: <HardDrive />, title: "Peak Performance", description: "Our fluid website experience guarantees flawless performance across all screens, from desktops and laptops to tablets and mobile devices." },
+        { icon: <Calendar />, title: "Fast Turnaround Time", description: "Launch your landing pages swiftly within 7 to 14 days, ensuring fast access to online opportunities without sacrificing quality." },
+        { icon: <Award />, title: "Unmatched Quality", description: "Always receive exceptional quality without any additional costs, ensuring unparalleled value and trust in every service we provide." },
+        { icon: <MessageCircle />, title: "Effortless Experience", description: "Our streamlined process and world-class systems minimize your involvement, saving you time while maximizing efficiency." },
+    ];
+
+    return (
+        <section ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 bg-black/30 border border-gray-700/50 backdrop-blur-xl rounded-3xl shadow-lg my-16">
+            <header className="text-center mb-16">
+                <h2 className="text-4xl sm:text-5xl font-extrabold text-white">About Us</h2>
+                <p className="mt-4 text-lg text-gray-400">Discover our unique strength and the distinctive value we offer.</p>
+            </header>
+            <div ref={obsRef} className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 stagger-children ${isVisible ? 'is-visible' : ''}`}>
+                {features.map((feature, index) => (
+                   <TiltOnHover key={index} className="h-full" maxTilt={25}>
+                        <div className="card-glow-border bg-gray-800/50 p-8 rounded-2xl group h-full flex flex-col" style={{ animationDelay: `${index * 100}ms` }}>
+                            <div className="text-white mb-5 bg-indigo-600 w-14 h-14 rounded-xl flex items-center justify-center shadow-lg transform group-hover:rotate-12 transition-transform duration-300 shrink-0">
+                               {React.cloneElement(feature.icon, { className: 'w-7 h-7' })}
+                            </div>
+                            <h3 className="font-semibold text-white text-xl mb-2">{feature.title}</h3>
+                            <p className="text-gray-400 text-sm leading-relaxed flex-grow">{feature.description}</p>
+                        </div>
+                    </TiltOnHover>
+                ))}
+            </div>
+        </section>
+    );
+});
+
+// Brand Defining Hero Section
+const BrandHeroSection = React.forwardRef((props, ref) => {
+    const slides = [
+        { text: 'Frame 1: Brand Identity', bg: 'bg-yellow-100', color: 'text-yellow-900' },
+        { text: 'Frame 2: Creative Vision', bg: 'bg-green-100', color: 'text-green-900' },
+        { text: 'Frame 3: Customer Focus', bg: 'bg-blue-100', color: 'text-blue-900' }
+    ];
+    const [current, setCurrent] = useState(0);
+
+    useEffect(() => {
+        const timer = setInterval(() => setCurrent(prev => (prev + 1) % slides.length), 2500);
+        return () => clearInterval(timer);
+    }, [slides.length]);
+
+    return (
+        <section ref={ref} className="bg-gray-900/50 backdrop-blur-xl py-28 px-4 my-16 border border-gray-700/50 rounded-3xl">
+            <div className="max-w-7xl mx-auto">
+                <h2 className="playfair-font text-center text-white text-5xl leading-tight font-normal max-w-4xl mx-auto">
+                    Our Works: Brand Defining Hero Sections
+                </h2>
+                <div className="mt-8 flex justify-center gap-x-10 gap-y-4 flex-wrap max-w-4xl mx-auto text-base font-semibold text-gray-300">
+                    {['Positive Initial Impression', 'Clear Brand Message', 'Improved Conversion Rates'].map(item => (
+                        <div key={item} className="flex items-center gap-3">
+                            <Check className="w-5 h-5 text-green-400" />
+                            <span>{item}</span>
+                        </div>
+                    ))}
+                </div>
+                <div className="mt-16 max-w-3xl mx-auto">
+                    <TiltOnHover className="h-72" maxTilt={10}>
+                        <div className="relative h-full rounded-xl overflow-hidden shadow-2xl border-4 border-gray-700">
+                            {slides.map((slide, index) => (
+                                <div key={slide.text} className={`absolute inset-0 transition-opacity duration-1000 ease-in-out flex items-center justify-center ${slide.bg} ${index === current ? 'opacity-100' : 'opacity-0'}`}>
+                                    <p className={`text-2xl font-bold italic ${slide.color}`}>{slide.text}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </TiltOnHover>
+                </div>
+            </div>
+        </section>
+    );
+});
+
+// Service Card Component with 3D Tilt
+const ServiceCard = ({ service }) => {
+  return (
+    <TiltOnHover className="card-glow-border bg-gray-800/50 rounded-2xl p-8 shadow-lg flex flex-col group h-full">
+      <div className="h-full flex flex-col">
+        <h3 className="font-bold text-white text-xl mb-2">{service.title}</h3>
+        <h4 className={`font-extrabold text-3xl ${service.color} mb-4`}>Starts at {service.price}</h4>
+        <p className="text-gray-400 mb-6 text-sm leading-relaxed flex-grow">{service.description}</p>
+        <ul className="space-y-3 text-sm text-gray-300 mb-8">
+          {service.details.map(detail => (
+            <li key={detail} className="flex items-center gap-3">
+              <Check className="w-5 h-5 text-green-500" />
+              <span>{detail}</span>
+            </li>
+          ))}
+        </ul>
+        <a href="#" className="mt-auto bg-indigo-600 text-white font-semibold rounded-lg px-6 py-3 text-center flex items-center justify-center gap-2 hover:bg-indigo-500 transition-all duration-300 transform group-hover:scale-105">
+            <span>Get Started</span>
+            <ArrowRight className="w-4 h-4" />
+        </a>
+      </div>
+    </TiltOnHover>
+  );
+};
+
+// Services Section
+const ServicesSection = React.forwardRef((props, ref) => {
+    const services = [
+        { title: "Landing Page", price: "$400", color: "text-blue-400", details: ["Mobile responsive design", "SEO optimized", "Contact form integration"], description: "A single, high-impact page designed to capture leads and drive conversions, built from scratch to production in 7-10 days." },
+        { title: "Multi-Page Website", price: "$500+", color: "text-purple-400", details: ["Up to 5 custom pages", "CMS integration", "Advanced animations"], description: "A multi-page site to showcase your brand and services in detail, built from scratch to production in 2-3 weeks." },
+        { title: "Website Design", price: "$350", color: "text-green-400", details: ["UI/UX Design", "Prototyping & Wireframing", "Brand Style Guides"], description: "Stunning, modern website designs that capture your brand's essence and provide an amazing user experience." },
+    ];
+    
+    const [obsRef, isVisible] = useIntersectionObserver({ threshold: 0.1 });
+
+    return (
+        <section ref={ref} className="py-24 px-6 max-w-7xl mx-auto">
+            <h2 className="text-center font-extrabold text-4xl sm:text-5xl mb-4 text-white">Choose Your Perfect Plan</h2>
+            <p className="text-center text-gray-400 mb-16 max-w-2xl mx-auto">High-quality services to elevate your business, designed to fit your needs and budget.</p>
+            <div ref={obsRef} className={`grid grid-cols-1 md:grid-cols-3 gap-10 stagger-children ${isVisible ? 'is-visible' : ''}`}>
+                {services.map((service, index) => (
+                    <div key={service.title} style={{ animationDelay: `${index * 150}ms` }}>
+                        <ServiceCard service={service} />
+                    </div>
+                ))}
+            </div>
+        </section>
+    );
+});
+
+// Gemini AI Project Planner
+const GeminiProjectPlanner = () => {
+    const [idea, setIdea] = useState('');
+    const [plan, setPlan] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const handleGeneratePlan = async () => {
+        if (!idea) {
+            setError('Please enter a project idea.');
+            return;
+        }
+        setIsLoading(true);
+        setError(null);
+        setPlan(null);
+
+        try {
+            const prompt = `Create a concise project plan for the following idea: "${idea}". The plan should have a project title and 3-4 main stages. Each stage should have a title and a bulleted list of 3-5 key tasks. Format the response as a JSON object. The structure should be: { "projectTitle": "...", "stages": [{ "stageTitle": "...", "tasks": ["...", "...", "..."] }] }`;
+            
+            const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+            const payload = { contents: chatHistory };
+            const apiKey = ""; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                throw new Error(`API error: ${response.statusText}`);
+            }
+
+            const result = await response.json();
+            
+            if (result.candidates && result.candidates[0].content.parts[0].text) {
+                const rawText = result.candidates[0].content.parts[0].text;
+                // Clean the text to ensure it's valid JSON
+                const cleanedText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+                const parsedPlan = JSON.parse(cleanedText);
+                setPlan(parsedPlan);
+            } else {
+                throw new Error('Unexpected API response format.');
+            }
+        } catch (e) {
+            console.error("Error generating plan:", e);
+            setError("Sorry, we couldn't generate a plan. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+    
+    return (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+            <header className="text-center mb-16">
+                <h2 className="text-4xl sm:text-5xl font-extrabold text-white flex items-center justify-center gap-4">
+                    <Sparkles className="w-10 h-10 text-indigo-400"/>
+                    Plan Your Project With AI
+                </h2>
+                <p className="mt-4 text-lg text-gray-400">Got an idea? Let our Gemini-powered AI draft a plan to get you started.</p>
+            </header>
+            <div className="max-w-3xl mx-auto bg-black/30 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-8">
+                <div className="flex flex-col sm:flex-row gap-4">
+                    <textarea
+                        value={idea}
+                        onChange={(e) => setIdea(e.target.value)}
+                        placeholder="e.g., A mobile app for dog walkers..."
+                        className="w-full h-24 sm:h-auto bg-gray-800/50 border border-gray-700 text-white rounded-lg p-4 resize-none focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                    />
+                    <button
+                        onClick={handleGeneratePlan}
+                        disabled={isLoading}
+                        className="bg-indigo-600 text-white font-semibold rounded-lg px-6 py-3 flex items-center justify-center gap-2 hover:bg-indigo-500 transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {isLoading ? (
+                           <div className="w-5 h-5 border-2 border-t-transparent border-white rounded-full animate-spin"></div>
+                        ) : (
+                           <BrainCircuit className="w-5 h-5"/>
+                        )}
+                        <span>{isLoading ? 'Generating...' : '✨ Generate Plan'}</span>
+                    </button>
+                </div>
+                {error && <p className="text-rose-400 mt-4 text-center">{error}</p>}
+                
+                {plan && (
+                    <div className="mt-8 border-t border-gray-700 pt-6 animate-slide-in-3d">
+                        <h3 className="text-2xl font-bold text-center mb-6">{plan.projectTitle}</h3>
+                        <div className="space-y-6">
+                            {plan.stages.map((stage, index) => (
+                                <div key={index} className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/80">
+                                    <h4 className="text-lg font-semibold text-indigo-400 mb-3">{stage.stageTitle}</h4>
+                                    <ul className="space-y-2">
+                                        {stage.tasks.map((task, taskIndex) => (
+                                            <li key={taskIndex} className="flex items-start gap-3">
+                                                <Check className="w-5 h-5 text-green-500 mt-1 shrink-0" />
+                                                <span className="text-gray-300">{task}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+                 {isLoading && !plan && (
+                    <div className="mt-8 border-t border-gray-700 pt-6">
+                         <div className="space-y-4">
+                             {[...Array(3)].map((_, i) => (
+                                 <div key={i} className="bg-gray-800/50 p-6 rounded-xl border border-gray-700/80 animate-loading-pulse">
+                                     <div className="h-6 bg-gray-700/80 rounded w-1/3 mb-4"></div>
+                                     <div className="space-y-2">
+                                         <div className="h-4 bg-gray-700/80 rounded w-full"></div>
+                                         <div className="h-4 bg-gray-700/80 rounded w-5/6"></div>
+                                         <div className="h-4 bg-gray-700/80 rounded w-3/4"></div>
+                                     </div>
+                                 </div>
+                             ))}
+                         </div>
+                    </div>
+                 )}
+
+            </div>
+        </section>
+    )
+};
+
+
+// Footer Component
+const Footer = () => {
+  return (
+    <footer className="bg-black text-slate-400 py-20 mt-16 border-t border-gray-800">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12">
+          <div>
+            <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-white"><Sparkles className="w-6 h-6 text-indigo-400"/> Lander</h3>
+            <p className="text-slate-400 leading-relaxed max-w-xs text-sm">Building successful digital products through innovation and expertise.</p>
+          </div>
+          <div>
+            <h3 className="text-white font-semibold text-lg mb-4">Services</h3>
+            <ul className="space-y-3 text-sm">
+              <li><a href="#" className="hover:text-indigo-400 transition-colors">Website Design</a></li>
+              <li><a href="#" className="hover:text-indigo-400 transition-colors">Web Development</a></li>
+              <li><a href="#" className="hover:text-indigo-400 transition-colors">SEO Optimization</a></li>
+              <li><a href="#" className="hover:text-indigo-400 transition-colors">Maintenance</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="text-white font-semibold text-lg mb-4">Company</h3>
+            <ul className="space-y-3 text-sm">
+               <li><a href="#" className="hover:text-indigo-400 transition-colors">About Us</a></li>
+               <li><a href="#" className="hover:text-indigo-400 transition-colors">Portfolio</a></li>
+               <li><a href="#" className="hover:text-indigo-400 transition-colors">Blog</a></li>
+               <li><a href="#" className="hover:text-indigo-400 transition-colors">Contact</a></li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="text-white font-semibold text-lg mb-4">Connect</h3>
+            <ul className="space-y-3 text-sm">
+               <li><a href="#" className="hover:text-indigo-400 transition-colors">Twitter</a></li>
+               <li><a href="#" className="hover:text-indigo-400 transition-colors">LinkedIn</a></li>
+               <li><a href="#" className="hover:text-indigo-400 transition-colors">Instagram</a></li>
+               <li><a href="#" className="hover:text-indigo-400 transition-colors">Email Us</a></li>
+            </ul>
+          </div>
+        </div>
+        <hr className="border-slate-800 mt-16 mb-8" />
+        <p className="text-center text-slate-500 text-sm">© {new Date().getFullYear()} Lander. All rights reserved.</p>
+      </div>
+    </footer>
+  );
+};
+
+
+// Floating Call Button
+const FloatingCallButton = () => {
+  return (
+    <a href="#" className="fixed bottom-8 right-8 bg-indigo-600 text-white p-4 rounded-full shadow-2xl hover:bg-indigo-500 transition-all duration-300 flex items-center justify-center z-50 transform hover:scale-110 hover:rotate-12">
+      <Calendar className="h-6 w-6" />
+    </a>
+  );
+};
+
+export default App;
