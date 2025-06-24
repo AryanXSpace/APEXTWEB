@@ -774,9 +774,9 @@ ServiceCard.displayName = 'ServiceCard';
 // Services Section
 const ServicesSection = React.forwardRef(function ServicesSection(props, ref) {
     const services = [
-        { title: "Landing Page", price: "$400", color: "text-blue-400", details: ["Mobile responsive design", "SEO optimized", "Contact form integration"], description: "A single, high-impact page designed to capture leads and drive conversions, built from scratch to production in 7-10 days." },
-        { title: "Multi-Page Website", price: "$1100", color: "text-purple-400", details: ["Up to 5 custom pages", "CMS integration", "Advanced animations"], description: "A multi-page site to showcase your brand and services in detail, built from scratch to production in 2-3 weeks." },
-        { title: "Website Design", price: "$500", color: "text-green-400", details: ["UI/UX Design", "Prototyping & Wireframing", "Brand Style Guides"], description: "Stunning, modern website designs that capture your brand's essence and provide an amazing user experience." },
+        { title: "Landing Page", color: "text-blue-400", details: ["Mobile responsive design", "SEO optimized", "Contact form integration"], description: "A single, high-impact page designed to capture leads and drive conversions, built from scratch to production in 7-10 days." },
+        { title: "Multi-Page Website", color: "text-purple-400", details: ["Up to 5 custom pages", "CMS integration", "Advanced animations"], description: "A multi-page site to showcase your brand and services in detail, built from scratch to production in 2-3 weeks." },
+        { title: "Website Design", color: "text-green-400", details: ["UI/UX Design", "Prototyping & Wireframing", "Brand Style Guides"], description: "Stunning, modern website designs that capture your brand's essence and provide an amazing user experience." },
     ];
 
     const [obsRef, isVisible] = useIntersectionObserver({ threshold: 0.1 });
