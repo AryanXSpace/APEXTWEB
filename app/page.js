@@ -445,6 +445,8 @@ const Header = ({ worksRef, pricingRef, aboutRef }) => {
     </header>
   );
 };
+Header.displayName = 'Header';
+
 
 // Hero Section Component
 const HeroSection = () => {
@@ -488,6 +490,7 @@ const HeroSection = () => {
     </section>
   );
 };
+HeroSection.displayName = 'HeroSection';
 
 // Info Slider Component
 const InfoSlider = () => {
@@ -509,6 +512,7 @@ const InfoSlider = () => {
         </div>
     );
 };
+InfoSlider.displayName = 'InfoSlider';
 
 
 // Winning Edge Section
@@ -614,6 +618,8 @@ const ServiceCard = ({ service }) => {
     </TiltOnHover>
   );
 };
+ServiceCard.displayName = 'ServiceCard';
+
 
 // Services Section
 const ServicesSection = React.forwardRef(function ServicesSection(props, ref) {
@@ -661,7 +667,7 @@ const GeminiProjectPlanner = () => {
             
             const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
             const payload = { contents: chatHistory };
-            const apiKey = ""; 
+            const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY; 
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
             const response = await fetch(apiUrl, {
@@ -766,6 +772,7 @@ const GeminiProjectPlanner = () => {
         </section>
     )
 };
+GeminiProjectPlanner.displayName = 'GeminiProjectPlanner';
 
 
 // Footer Component
@@ -812,6 +819,7 @@ const Footer = () => {
     </footer>
   );
 };
+Footer.displayName = 'Footer';
 
 
 // Floating Call Button
@@ -822,5 +830,6 @@ const FloatingCallButton = () => {
     </a>
   );
 };
+FloatingCallButton.displayName = 'FloatingCallButton';
 
 export default App;
