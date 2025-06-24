@@ -750,6 +750,7 @@ const ServiceCard = ({ service }) => {
     <TiltOnHover className="card-glow-border bg-gray-800/50 rounded-2xl p-8 shadow-lg flex flex-col group h-full">
       <div className="h-full flex flex-col">
         <h3 className="font-bold text-white text-xl mb-2">{service.title}</h3>
+        <h4 className={`font-extrabold text-3xl ${service.color} mb-4`}>{service.price}</h4>
         <p className="text-gray-400 mb-6 text-sm leading-relaxed flex-grow">{service.description}</p>
         <ul className="space-y-3 text-sm text-gray-300 mb-8">
           {service.details.map(detail => (
@@ -773,9 +774,9 @@ ServiceCard.displayName = 'ServiceCard';
 // Services Section
 const ServicesSection = React.forwardRef(function ServicesSection(props, ref) {
     const services = [
-        { title: "Landing Page", color: "text-blue-400", details: ["Mobile responsive design", "SEO optimized", "Contact form integration"], description: "A single, high-impact page designed to capture leads and drive conversions, built from scratch to production in 7-10 days." },
-        { title: "Multi-Page Website", color: "text-purple-400", details: ["Up to 5 custom pages", "CMS integration", "Advanced animations"], description: "A multi-page site to showcase your brand and services in detail, built from scratch to production in 2-3 weeks." },
-        { title: "Website Design", color: "text-green-400", details: ["UI/UX Design", "Prototyping & Wireframing", "Brand Style Guides"], description: "Stunning, modern website designs that capture your brand's essence and provide an amazing user experience." },
+        { title: "Landing Page", price: "$400", color: "text-blue-400", details: ["Mobile responsive design", "SEO optimized", "Contact form integration"], description: "A single, high-impact page designed to capture leads and drive conversions, built from scratch to production in 7-10 days." },
+        { title: "Multi-Page Website", price: "$1100", color: "text-purple-400", details: ["Up to 5 custom pages", "CMS integration", "Advanced animations"], description: "A multi-page site to showcase your brand and services in detail, built from scratch to production in 2-3 weeks." },
+        { title: "Website Design", price: "$500", color: "text-green-400", details: ["UI/UX Design", "Prototyping & Wireframing", "Brand Style Guides"], description: "Stunning, modern website designs that capture your brand's essence and provide an amazing user experience." },
     ];
 
     const [obsRef, isVisible] = useIntersectionObserver({ threshold: 0.1 });
