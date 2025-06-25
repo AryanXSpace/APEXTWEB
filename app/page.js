@@ -32,7 +32,7 @@ const useIntersectionObserver = (options) => {
 };
 
 // Reusable 3D Tilt Component
-const TiltOnHover = ({ children, className, perspective = 1000, maxTilt = 15 }) => {
+const TiltOnHover = ({ children, className, perspective = 1000, maxTilt = 15, scale = 1.05 }) => {
   const ref = useRef(null);
 
   const handleMouseMove = (e) => {
@@ -40,7 +40,7 @@ const TiltOnHover = ({ children, className, perspective = 1000, maxTilt = 15 }) 
     const { left, top, width, height } = ref.current.getBoundingClientRect();
     const x = (e.clientX - left - width / 2) / maxTilt;
     const y = (e.clientY - top - height / 2) / maxTilt;
-    ref.current.style.transform = `perspective(${perspective}px) rotateY(${x}deg) rotateX(${-y}deg) scale3d(1.05, 1.05, 1.05)`;
+    ref.current.style.transform = `perspective(${perspective}px) rotateY(${x}deg) rotateX(${-y}deg) scale3d(${scale}, ${scale}, ${scale})`;
   };
 
   const handleMouseLeave = () => {
@@ -146,32 +146,42 @@ const TypingHeroText = ({ phrases, className }) => {
 };
 TypingHeroText.displayName = 'TypingHeroText';
 
-// Calendly Script Loader
-const useCalendly = () => {
+// Cal.com Script Loader
+const useCal = () => {
   useEffect(() => {
-    const head = document.querySelector('head');
+    (function (C, A, L) {
+      let p = function (a, ar) {
+        a.q.push(ar);
+      };
+      let d = C.document;
+      C.Cal = C.Cal || function () {
+        let cal = C.Cal;
+        let ar = arguments;
+        if (!cal.loaded) {
+          cal.ns = {};
+          cal.q = cal.q || [];
+          d.head.appendChild(d.createElement("script")).src = A;
+          cal.loaded = true;
+        }
+        if (ar[0] === L) {
+          const api = function () {
+            p(api, arguments);
+          };
+          const namespace = ar[1];
+          api.q = api.q || [];
+          if (typeof namespace === "string") {
+            cal.ns[namespace] = cal.ns[namespace] || api;
+            p(cal.ns[namespace], ar);
+            p(cal, ["initNamespace", namespace]);
+          } else p(cal, ar);
+          return;
+        }
+        p(cal, ar);
+      };
+    })(window, "https://app.cal.com/embed/embed.js", "init");
 
-    // Load CSS
-    const cssLink = document.createElement('link');
-    cssLink.href = 'https://assets.calendly.com/assets/external/widget.css';
-    cssLink.rel = 'stylesheet';
-    head.appendChild(cssLink);
-
-    // Load JS
-    const script = document.createElement('script');
-    script.src = 'https://assets.calendly.com/assets/external/widget.js';
-    script.async = true;
-    head.appendChild(script);
-
-    return () => {
-      // Clean up scripts if component unmounts
-      if (head.contains(cssLink)) {
-        head.removeChild(cssLink);
-      }
-      if (head.contains(script)) {
-        head.removeChild(script);
-      }
-    }
+    Cal("init", { origin: "https://app.cal.com" });
+    Cal("ui", {"theme":"dark","styles":{"branding":{"brandColor":"#000000"}},"hideEventTypeDetails":false,"layout":"month_view"});
   }, []);
 };
 
@@ -221,7 +231,7 @@ const App = () => {
   const pricingRef = useRef(null);
   const aboutRef = useRef(null);
 
-  useCalendly();
+  useCal();
 
   // Mouse position effect for CSS variables
   useEffect(() => {
@@ -273,6 +283,7 @@ const App = () => {
             <GeminiProjectPlanner />
         </main>
         <Footer />
+        <FloatingCallButton />
       </div>
     </div>
   );
@@ -528,12 +539,6 @@ const Header = ({ worksRef, pricingRef, aboutRef }) => {
     });
   };
 
-  const openCalendly = () => {
-    if(window.Calendly) {
-        window.Calendly.initPopupWidget({ url: 'https://calendly.com/clientreviewsapex/15min' });
-    }
-  };
-
   return (
     <header className={`fixed top-0 left-0 w-full z-50 transition-transform duration-500 ease-in-out ${visible ? 'translate-y-0' : '-translate-y-full'}`}>
         <div className="py-4 px-6">
@@ -561,13 +566,11 @@ const Header = ({ worksRef, pricingRef, aboutRef }) => {
                     </MagneticWrapper>
                 ))}
                 </div>
-
-                <MagneticWrapper>
-                    <button onClick={openCalendly} className={`hidden sm:flex items-center space-x-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 transform group bg-white text-black`}>
-                    <span>Book a Call</span>
-                    <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
-                    </button>
-                </MagneticWrapper>
+                
+                <button data-cal-link="apex-review-bot-bbiocs/15min" className={`hidden sm:flex items-center space-x-2 px-5 py-2.5 rounded-full text-sm font-semibold transition-colors duration-300 bg-white text-black hover:bg-gray-200`}>
+                <span>Book a Call</span>
+                <ChevronRight className="w-4 h-4" />
+                </button>
             </nav>
         </div>
     </header>
@@ -578,11 +581,6 @@ Header.displayName = 'Header';
 
 // Hero Section Component
 const HeroSection = () => {
-    const openCalendly = () => {
-        if(window.Calendly) {
-            window.Calendly.initPopupWidget({ url: 'https://calendly.com/clientreviewsapex/15min' });
-        }
-    };
   return (
     <section className="pt-48 pb-24 text-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
        <a
@@ -610,16 +608,14 @@ const HeroSection = () => {
         You focus on your business. We’ll build you a website that looks sharp and sells better.
       </p>
       <div className="flex justify-center items-center mt-10 fade-in-up gap-4" style={{ animationDelay: '450ms' }}>
-        <MagneticWrapper>
-            <button
-            type="button"
-            onClick={openCalendly}
-            className="inline-flex items-center space-x-2 bg-white text-black text-sm font-semibold px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors duration-300 transform shadow-lg"
-            >
-            <span className="w-2 h-2 rounded-full bg-green-400 inline-block animate-pulse-slow"></span>
-            <span>Book a Call</span>
-            </button>
-        </MagneticWrapper>
+        <button
+        type="button"
+        data-cal-link="apex-review-bot-bbiocs/15min"
+        className="inline-flex items-center space-x-2 bg-white text-black text-sm font-semibold px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors duration-300 shadow-lg"
+        >
+        <span className="w-2 h-2 rounded-full bg-green-400 inline-block animate-pulse-slow"></span>
+        <span>Book a Call</span>
+        </button>
         <MagneticWrapper>
             <a href="mailto:contact@apexservices.store"
             className="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-500 to-indigo-600 text-white text-sm font-semibold px-6 py-3 rounded-lg hover:opacity-90 transition-opacity duration-300 transform shadow-lg brazy-button"
@@ -661,12 +657,12 @@ InfoSlider.displayName = 'InfoSlider';
 const WinningEdgeSection = React.forwardRef(function WinningEdgeSection(props, ref) {
     const [obsRef, isVisible] = useIntersectionObserver({ threshold: 0.1 });
     const features = [
-        { icon: <SlidersHorizontal />, title: "SEO-Optimized", description: "Our SEO-centric design approach enhances your online visibility, driving organic traffic by securing prime ranks on Google search." },
-        { icon: <Zap />, title: "High-Converting Design", description: "Our engaging design techniques drive remarkable increases in conversion rates by compelling visitors to take decisive, intentional action." },
-        { icon: <HardDrive />, title: "Peak Performance", description: "Our fluid website experience guarantees flawless performance across all screens, from desktops and laptops to tablets and mobile devices." },
-        { icon: <Calendar />, title: "Fast Turnaround Time", description: "Launch your landing pages swiftly within 7 to 14 days, ensuring fast access to online opportunities without sacrificing quality." },
-        { icon: <Award />, title: "Unmatched Quality", description: "Always receive exceptional quality without any additional costs, ensuring unparalleled value and trust in every service we provide." },
-        { icon: <MessageCircle />, title: "Effortless Experience", description: "Our streamlined process and world-class systems minimize your involvement, saving you time while maximizing efficiency." },
+        { icon: <SlidersHorizontal />, title: "Conversion-Optimized Design", description: "We build websites with strategy at the core — every layout, CTA, and flow is crafted to drive action, generate leads, and maximize ROI from day one." },
+        { icon: <Zap />, title: "Blazing Fast Performance", description: "Your site loads in under 2 seconds, delivering lightning-fast experiences across all devices. Speed = retention, better rankings, and more trust." },
+        { icon: <HardDrive />, title: "SEO-First Architecture", description: "From code structure to meta strategy, we embed SEO from the ground up — helping your site rank higher, get discovered faster, and stay visible." },
+        { icon: <Calendar />, title: "Rapid Turnaround Delivery", description: "We deliver full-scale websites in 7–14 days without sacrificing quality. Our agile execution means you get to market faster — and smarter." },
+        { icon: <Award />, title: "Enterprise-Grade Quality", description: "Custom UI/UX, modern tech stacks, mobile-first responsiveness, and pixel-perfect detail — built to the standards projects, without the bloat." },
+        { icon: <MessageCircle />, title: "End-to-End Management", description: "We handle everything — strategy, copy, design, dev, optimization, and launch. You stay focused on your business while we bring your site to life, fully done-for-you." },
     ];
 
     return (
@@ -714,7 +710,7 @@ const BrandHeroSection = React.forwardRef(function BrandHeroSection(props, ref) 
                     Our Works: Brand Defining Hero Sections
                 </h2>
                 <div className="mt-8 flex justify-center gap-x-10 gap-y-4 flex-wrap max-w-4xl mx-auto text-base font-semibold text-gray-300">
-                    {['Positive Initial Impression', 'Clear Brand Message', 'Improved Conversion Rates'].map(item => (
+                    {['Instant Brand Trust', 'High-Intent Engagement', 'Lead-Generating Layouts'].map(item => (
                         <div key={item} className="flex items-center gap-3">
                             <Check className="w-5 h-5 text-green-400" />
                             <span>{item}</span>
@@ -722,7 +718,7 @@ const BrandHeroSection = React.forwardRef(function BrandHeroSection(props, ref) 
                     ))}
                 </div>
                 <div className="mt-16 max-w-3xl mx-auto">
-                    <TiltOnHover className="h-72" maxTilt={10}>
+                    <TiltOnHover className="h-72" maxTilt={10} scale={1}>
                         <div className="relative h-full rounded-xl overflow-hidden shadow-2xl border-4 border-gray-700">
                             {slides.map((slide, index) => (
                                 <div key={slide.text} className={`absolute inset-0 transition-opacity duration-1000 ease-in-out flex items-center justify-center ${slide.bg} ${index === current ? 'opacity-100' : 'opacity-0'}`}>
@@ -741,16 +737,10 @@ BrandHeroSection.displayName = 'BrandHeroSection';
 
 // Service Card Component with 3D Tilt
 const ServiceCard = ({ service }) => {
-    const openCalendly = () => {
-        if(window.Calendly) {
-            window.Calendly.initPopupWidget({ url: 'https://calendly.com/clientreviewsapex/15min' });
-        }
-    };
   return (
     <TiltOnHover className="card-glow-border bg-gray-800/50 rounded-2xl p-8 shadow-lg flex flex-col group h-full">
       <div className="h-full flex flex-col">
-        <h3 className="font-bold text-white text-xl mb-2">{service.title}</h3>
-        <h4 className={`font-extrabold text-3xl ${service.color} mb-4`}>{service.price}</h4>
+        <h3 className="font-bold text-white text-xl mb-4">{service.title}</h3>
         <p className="text-gray-400 mb-6 text-sm leading-relaxed flex-grow">{service.description}</p>
         <ul className="space-y-3 text-sm text-gray-300 mb-8">
           {service.details.map(detail => (
@@ -760,7 +750,7 @@ const ServiceCard = ({ service }) => {
             </li>
           ))}
         </ul>
-        <button onClick={openCalendly} className="mt-auto bg-indigo-600 text-white font-semibold rounded-lg px-6 py-3 text-center flex items-center justify-center gap-2 hover:bg-indigo-500 transition-all duration-300 transform group-hover:scale-105">
+        <button data-cal-link="apex-review-bot-bbiocs/15min" className="mt-auto bg-indigo-600 text-white font-semibold rounded-lg px-6 py-3 text-center flex items-center justify-center gap-2 hover:bg-indigo-500 transition-colors duration-300">
             <span>Get Started</span>
             <ArrowRight className="w-4 h-4" />
         </button>
@@ -774,8 +764,8 @@ ServiceCard.displayName = 'ServiceCard';
 // Services Section
 const ServicesSection = React.forwardRef(function ServicesSection(props, ref) {
     const services = [
-        { title: "Landing Page",color: "text-blue-400", details: ["Mobile responsive design", "SEO optimized", "Contact form integration"], description: "A single, high-impact page designed to capture leads and drive conversions, built from scratch to production in 7-10 days." },
-        { title: "Multi-Page Website",color: "text-purple-400", details: ["Up to 5 custom pages", "CMS integration", "Advanced animations"], description: "A multi-page site to showcase your brand and services in detail, built from scratch to production in 2-3 weeks." },
+        { title: "Landing Page", color: "text-blue-400", details: ["Mobile responsive design", "SEO optimized", "Contact form integration"], description: "A single, high-impact page designed to capture leads and drive conversions, built from scratch to production in 7-10 days." },
+        { title: "Multi-Page Website", color: "text-purple-400", details: ["Up to 5 custom pages", "CMS integration", "Advanced animations"], description: "A multi-page site to showcase your brand and services in detail, built from scratch to production in 2-3 weeks." },
         { title: "Website Design", color: "text-green-400", details: ["UI/UX Design", "Prototyping & Wireframing", "Brand Style Guides"], description: "Stunning, modern website designs that capture your brand's essence and provide an amazing user experience." },
     ];
 
@@ -895,7 +885,8 @@ const Footer = () => {
             <ul className="space-y-3 text-sm">
                <li><a href="https://x.com/Apexstudio_labs" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors">Twitter</a></li>
                <li><a href="mailto:contact@apexservices.store" className="hover:text-indigo-400 transition-colors">contact@apexservices.store</a></li>
-               
+               <li><a href="#" className="hover:text-indigo-400 transition-colors">LinkedIn</a></li>
+               <li><a href="#" className="hover:text-indigo-400 transition-colors">Instagram</a></li>
             </ul>
           </div>
         </div>
@@ -910,13 +901,8 @@ Footer.displayName = 'Footer';
 
 // Floating Call Button
 const FloatingCallButton = () => {
-    const openCalendly = () => {
-        if(window.Calendly) {
-            window.Calendly.initPopupWidget({ url: 'https://calendly.com/clientreviewsapex/15min' });
-        }
-    };
   return (
-    <button onClick={openCalendly} className="fixed bottom-8 right-8 bg-indigo-600 text-white p-4 rounded-full shadow-2xl hover:bg-indigo-500 transition-all duration-300 flex items-center justify-center z-50 transform hover:scale-110 hover:rotate-12">
+    <button data-cal-link="apex-review-bot-bbiocs/15min" className="fixed bottom-8 right-8 bg-indigo-600 text-white p-4 rounded-full shadow-2xl hover:bg-indigo-500 transition-colors duration-300 z-50">
       <Calendar className="h-6 w-6" />
     </button>
   );
