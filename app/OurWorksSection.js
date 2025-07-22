@@ -1,7 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
+import useEmblaCarousel from 'embla-carousel-react';
+import './embla.css';
 
 const ProjectImage = ({ src, alt }) => (
   <div className="group relative overflow-hidden rounded-2xl shadow-lg h-full w-full">
@@ -16,6 +18,18 @@ const ProjectImage = ({ src, alt }) => (
 );
 
 const OurWorksSection = React.forwardRef(function OurWorksSection(props, ref) {
+  const [emblaRef] = useEmblaCarousel();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   const projects = [
     {
       src: '/FINALE112.png',
@@ -41,13 +55,28 @@ const OurWorksSection = React.forwardRef(function OurWorksSection(props, ref) {
           <h2 className="text-4xl sm:text-5xl font-extrabold text-white">Our Creative Work</h2>
           <p className="mt-4 text-lg text-gray-400 max-w-3xl mx-auto">We transform ideas into stunning digital experiences. Here’s a glimpse of our craft.</p>
         </header>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:auto-rows-[35vh]">
-          {projects.map((project, index) => (
-            <div key={index} className={project.className}>
-              <ProjectImage src={project.src} alt={project.alt} />
+
+        {isMobile ? (
+          <div className="embla" ref={emblaRef}>
+            <div className="embla__container">
+              {projects.map((project, index) => (
+                <div className="embla__slide" key={index}>
+                  <div className="h-80 w-full">
+                    <ProjectImage src={project.src} alt={project.alt} />
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:auto-rows-[35vh]">
+            {projects.map((project, index) => (
+              <div key={index} className={project.className}>
+                <ProjectImage src={project.src} alt={project.alt} />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
