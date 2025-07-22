@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef, useMemo } from 'react';
+import OurWorksSection from './OurWorksSection';
 import { Sparkles, Check, ChevronRight, MessageCircle, Zap, Calendar, Award, HardDrive, SlidersHorizontal, ArrowRight, Star, BrainCircuit, Mail } from 'lucide-react';
 
 // Custom Hook for detecting when an element is in the viewport
@@ -277,8 +278,9 @@ const App = () => {
         <main>
             <HeroSection />
             <InfoSlider />
+            <OurWorksSection />
             <WinningEdgeSection ref={aboutRef} />
-            <BrandHeroSection ref={worksRef} />
+
             <ServicesSection ref={pricingRef} />
             <GeminiProjectPlanner />
         </main>
@@ -909,4 +911,12 @@ const FloatingCallButton = () => {
 };
 FloatingCallButton.displayName = 'FloatingCallButton';
 
-export default App;
+const Page = () => {
+  return (
+    <>
+      <App />
+    </>
+  );
+};
+
+export default Page;
