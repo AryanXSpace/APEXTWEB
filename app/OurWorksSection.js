@@ -49,7 +49,7 @@ const OurWorksSection = React.forwardRef(function OurWorksSection(props, ref) {
   ];
 
   return (
-    <section ref={ref} className="py-24 px-4 sm:px-6 lg:px-8 bg-black">
+    <section ref={ref} id="works" className="py-24 px-4 sm:px-6 lg:px-8 bg-black">
       <div className="max-w-7xl mx-auto">
         <header className="text-center mb-16">
           <h2 className="text-4xl sm:text-5xl font-extrabold text-white">Our Creative Work</h2>

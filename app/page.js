@@ -668,7 +668,7 @@ const WinningEdgeSection = React.forwardRef(function WinningEdgeSection(props, r
     ];
 
     return (
-        <section ref={ref} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 bg-black/30 border border-gray-700/50 backdrop-blur-xl rounded-3xl shadow-lg my-16">
+        <section ref={ref} id="about" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 bg-black/30 border border-gray-700/50 backdrop-blur-xl rounded-3xl shadow-lg my-16">
             <header className="text-center mb-16">
                 <h2 className="text-4xl sm:text-5xl font-extrabold text-white">About Us</h2>
                 <p className="mt-4 text-lg text-gray-400">Discover our unique strength and the distinctive value we offer.</p>
@@ -876,10 +876,10 @@ const Footer = () => {
           <div>
             <h3 className="text-white font-semibold text-lg mb-4">Company</h3>
             <ul className="space-y-3 text-sm">
-               <li><a href="#" className="hover:text-indigo-400 transition-colors">About Us</a></li>
-               <li><a href="#" className="hover:text-indigo-400 transition-colors">Portfolio</a></li>
-               <li><a href="#" className="hover:text-indigo-400 transition-colors">Blog</a></li>
-               <li><a href="#" className="hover:text-indigo-400 transition-colors">Contact</a></li>
+               <li><a href="#about" className="hover:text-indigo-400 transition-colors">About Us</a></li>
+               <li><a href="#works" className="hover:text-indigo-400 transition-colors">Portfolio</a></li>
+               <li><a href="/terms" className="hover:text-indigo-400 transition-colors">Terms & Policy</a></li>
+               <li><a href="mailto:contact@apexservices.store" className="hover:text-indigo-400 transition-colors">Contact</a></li>
             </ul>
           </div>
           <div>
